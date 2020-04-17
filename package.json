@@ -29,7 +29,8 @@
   "dependencies": {
     "electron-store": "^5.1.1",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "timeago.js": "^4.0.2"
   },
   "devDependencies": {
     "electron": "^8.2.3",
@@ -41,7 +42,11 @@
     "extends": "react-app"
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
