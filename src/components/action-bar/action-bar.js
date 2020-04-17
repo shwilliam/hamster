@@ -8,7 +8,11 @@ export const ActionBar = () => {
 
   const handleSubmit = e => {
     e.preventDefault()
-    createNote(value)
+
+    const trimmedValue = value.trim()
+    if (trimmedValue.length === 0) return
+
+    createNote(trimmedValue)
     clearInput()
   }
 
