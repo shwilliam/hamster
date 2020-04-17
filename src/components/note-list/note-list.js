@@ -4,18 +4,23 @@ import {formatReadableTimestamp} from '../../utils'
 
 export const NoteList = () => {
   const {notes} = useContext(StoreContext)
-  const {setActiveNote} = useContext(ActiveNoteContext)
+  const {activeNote, setActiveNote} = useContext(ActiveNoteContext)
 
   return (
     <ul className="note-list">
-      {notes.map(({title, content, modified}, i) => (
-        <li key={i} className="note-list__item">
+      {notes.map(note => (
+        <li
+          key={note.id}
+          className="note-list__item"
+          data-active={activeNote && activeNote.id === note.id}
+        >
           <button
+            type="button"
             className="note-list__button"
-            onClick={() => setActiveNote({title, content})}
+            onClick={() => setActiveNote(note)}
           >
-            <p className="info">{formatReadableTimestamp(modified)}</p>
-            <p>{title}</p>
+            <p className="info">{formatReadableTimestamp(note.modified)}</p>
+            <p>{note.title}</p>
           </button>
         </li>
       ))}
