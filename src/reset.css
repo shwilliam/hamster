@@ -1,5 +1,109 @@
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
 body {
   font-family: sans-serif;
-  font-size: 14px;
+  font-size: 15px;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
   margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+nav ol,
+nav ul {
+  list-style: none;
+}
+
+a,
+a:visited {
+  color: inherit;
+}
+
+blockquote,
+q {
+  quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+
+[disabled] {
+  cursor: not-allowed;
+}
+
+img,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* SVG fill falls back to text color */
+svg:not([fill]) {
+  fill: currentColor;
+}
+
+.sr-only {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.sr-only--focus:focus {
+  position: static;
+  width: auto;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
