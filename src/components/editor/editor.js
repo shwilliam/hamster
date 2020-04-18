@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react'
+import React, {useContext, useState, useEffect, useRef} from 'react'
 import {
   Editor as DraftEditor,
   EditorState,
@@ -10,9 +10,18 @@ import {ActiveNoteContext, StoreContext} from '../../context'
 import {IconBold, IconItalic, IconUnderline} from '../icon'
 
 export const Editor = () => {
+  const editorRef = useRef()
   const {activeNote} = useContext(ActiveNoteContext)
+  const previousActiveNote = useRef()
   const {updateNote} = useContext(StoreContext)
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
+
+  useEffect(() => {
+    if (activeNote && previousActiveNote.current !== activeNote.id) {
+      editorRef.current.focus()
+      previousActiveNote.current = activeNote.id
+    }
+  }, [activeNote])
 
   useEffect(() => {
     if (activeNote)
@@ -55,6 +64,13 @@ export const Editor = () => {
 
   return (
     <section className="editor">
+      <DraftEditor
+        ref={editorRef}
+        editorState={editorState}
+        onChange={setEditorState}
+        handleKeyCommand={handleKeyCommand}
+      />
+
       <div className="editor__actions">
         <button
           title="Bold (Command+B)"
@@ -84,12 +100,6 @@ export const Editor = () => {
           <IconUnderline />
         </button>
       </div>
-
-      <DraftEditor
-        editorState={editorState}
-        onChange={setEditorState}
-        handleKeyCommand={handleKeyCommand}
-      />
     </section>
   )
 }
