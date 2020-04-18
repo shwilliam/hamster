@@ -1,12 +1,17 @@
-import React, {useContext, useEffect} from 'react'
+import React, {useContext, useEffect, useRef} from 'react'
 import {StoreContext, SearchContext} from '../../context'
 import {useInput} from '../../hooks'
 import {IconSearch, IconPen} from '../index'
 
 export const ActionBar = () => {
+  const actionBarRef = useRef()
   const {setQuery} = useContext(SearchContext)
   const {createNote} = useContext(StoreContext)
   const [value, handleChange, clearInput] = useInput()
+
+  useEffect(() => {
+    actionBarRef.current.focus()
+  }, [])
 
   useEffect(() => {
     setQuery(value)
@@ -29,6 +34,7 @@ export const ActionBar = () => {
           {!value ? <IconSearch /> : <IconPen />}
         </span>
         <input
+          ref={actionBarRef}
           placeholder="Search or create..."
           className="action-bar__input"
           type="text"
