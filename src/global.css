@@ -1,14 +1,19 @@
 /* utils */
-.input-text {
-  border: 1px solid #dfe2e5;
-  border-radius: 3px;
-}
-
 .info {
   opacity: 0.7;
   font-size: 10px;
   line-height: 10px;
   padding-bottom: 3px;
+}
+
+.icon {
+  width: 18px;
+  color: #1e2428;
+}
+
+.disabled,
+.disabled * {
+  cursor: not-allowed !important;
 }
 
 /* app */
@@ -18,7 +23,7 @@
   grid-template-areas:
     'header header'
     'sidebar content';
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: minmax(150px, 1fr) minmax(200px, 3fr);
   grid-template-rows: 60px 1fr;
 }
 
@@ -41,26 +46,47 @@
   overflow-y: scroll;
 }
 
+/* action bar */
+.action-bar {
+  position: relative;
+}
+
+.action-bar__input {
+  position: absolute;
+  left: 0;
+  border: 1px solid #dfe2e5;
+  border-radius: 3px;
+  width: 100%;
+  padding: 0.25rem 0.25rem 0.25rem 34px;
+}
+
+.action-bar__icon {
+  position: absolute;
+  left: 0;
+  z-index: 999;
+  padding: 2.5px 10px;
+}
+
+.action-bar__icon svg {
+  width: 17px;
+}
+
 /* note list */
-.note-list {
-}
-
-.note-list__item {
-}
-
-.note-list__item:hover {
+.note-list__item-container:hover,
+.note-list__item-container--new,
+.note-list__item-container:not([data-active='true']) .note-list__item:focus {
   background-color: #f5f8fa;
 }
 
-.note-list__item[data-active='true'] {
+.note-list__item-container[data-active='true'] {
   background-color: #5c5c61;
 }
 
-.note-list__item[data-active='true'] p {
+.note-list__item-container[data-active='true'] p {
   color: #fff;
 }
 
-.note-list__button {
+.note-list__item {
   width: 100%;
   padding: 1rem 1rem 0.5rem 1rem;
   background-color: transparent;
@@ -69,8 +95,43 @@
   cursor: pointer;
 }
 
-.note-list__button:focus {
-  border: none;
+/* editor */
+.editor {
+  position: relative;
+  font-family: monospace;
+  padding-right: 50px;
+}
+
+.editor__action {
+  display: inline-block;
+  padding: 0.25rem 0.2rem;
   background-color: transparent;
-  outline: none;
+  border: none;
+  cursor: pointer;
+}
+
+.editor__action svg {
+  width: 15px;
+}
+
+.editor__actions {
+  position: absolute;
+  right: 0;
+  top: -5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor__toast-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.editor__toast-container p {
+  opacity: 0.7;
+  background-color: #fff;
+  border: 1px solid #dfe2e5;
+  border-radius: 3px;
+  padding: 0.5rem;
 }
