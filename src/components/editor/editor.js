@@ -1,6 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react'
 import {Editor as DraftEditor, EditorState, ContentState} from 'draft-js'
-import {stateToMarkdown} from 'draft-js-export-markdown'
 import {ActiveNoteContext, StoreContext} from '../../context'
 import {useDebounce} from '../../hooks'
 
@@ -18,7 +17,7 @@ export const Editor = () => {
     if (activeNote)
       setEditorState(
         EditorState.createWithContent(
-          ContentState.createFromText(activeNote?.content || ''),
+          ContentState.createFromText(activeNote?.content.trim() || ''),
         ),
       )
   }, [activeNote])
@@ -27,7 +26,10 @@ export const Editor = () => {
     if (activeNote)
       updateNote(
         activeNote.id,
-        stateToMarkdown(debouncedEditorState.getCurrentContent()),
+        debouncedEditorState
+          .getCurrentContent()
+          .getPlainText()
+          .trim(),
       )
   }, [debouncedEditorState, activeNote, updateNote])
 
