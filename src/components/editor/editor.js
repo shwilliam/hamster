@@ -1,7 +1,6 @@
 import React, {useContext, useState, useEffect} from 'react'
 import {Editor as DraftEditor, EditorState, ContentState} from 'draft-js'
 import {ActiveNoteContext, StoreContext} from '../../context'
-import {useDebounce} from '../../hooks'
 
 export const Editor = () => {
   const {activeNote} = useContext(ActiveNoteContext)
@@ -11,7 +10,6 @@ export const Editor = () => {
       ContentState.createFromText(activeNote?.content || ''),
     ),
   )
-  const debouncedEditorState = useDebounce(editorState, 400)
 
   useEffect(() => {
     if (activeNote)
@@ -23,15 +21,16 @@ export const Editor = () => {
   }, [activeNote])
 
   useEffect(() => {
-    if (activeNote)
+    if (activeNote) {
       updateNote(
         activeNote.id,
-        debouncedEditorState
+        editorState
           .getCurrentContent()
           .getPlainText()
           .trim(),
       )
-  }, [debouncedEditorState, activeNote, updateNote])
+    }
+  }, [editorState, activeNote, updateNote])
 
   if (!activeNote)
     return (
