@@ -1,3 +1,4 @@
+import {ContentState, convertToRaw} from 'draft-js'
 import shortid from 'shortid'
 import {store} from './store'
 import {sortByModified} from '../../utils'
@@ -11,13 +12,14 @@ export const reducer = (stateAcc, {type, payload}) => {
         ...stateAcc,
         notes: store.get('__hamster-notes__')?.sort(sortByModified) || [],
       }
+
     case 'CREATE_NOTE':
       const notesWithNew = [
         ...existingNotes,
         {
           id: shortid.generate(),
           title: payload.title,
-          content: '',
+          content: convertToRaw(ContentState.createFromText('')),
           modified: new Date().toISOString(),
         },
       ]
