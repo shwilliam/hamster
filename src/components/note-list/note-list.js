@@ -3,6 +3,7 @@ import {StoreContext, ActiveNoteContext} from '../../context'
 import {formatReadableTimestamp} from '../../utils'
 
 export const NoteList = () => {
+  const noteListRef = useRef()
   const {activeNote, setActiveNote} = useContext(ActiveNoteContext)
   const {notes} = useContext(StoreContext)
   const prevNotes = useRef(notes)
@@ -11,14 +12,17 @@ export const NoteList = () => {
     if (prevNotes.current.length !== notes.length) {
       setActiveNote(notes[0])
       prevNotes.current = notes
+
+      noteListRef.current.scrollTo(0, 0)
     }
   }, [notes, setActiveNote])
 
   return (
-    <ul className="note-list">
+    <ul className="note-list" ref={noteListRef}>
       {notes.map(note => (
         <li
           key={note.id}
+          id={`note-${note.id}`}
           className="note-list__item-container"
           data-active={activeNote?.id === note.id}
         >

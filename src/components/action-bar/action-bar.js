@@ -34,6 +34,7 @@ export const ActionBar = () => {
         }
       } else {
         setActiveNote(selectedItem)
+        window[`note-${selectedItem.id}`].scrollIntoView()
       }
     },
     onInputValueChange: ({inputValue}) => {
