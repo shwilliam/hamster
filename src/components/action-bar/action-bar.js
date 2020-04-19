@@ -13,7 +13,6 @@ export const ActionBar = () => {
   const {
     isOpen,
     inputValue,
-    selectedItem,
     getLabelProps,
     getMenuProps,
     getInputProps,
@@ -22,11 +21,17 @@ export const ActionBar = () => {
     getItemProps,
   } = useCombobox({
     items: inputItems,
-    itemToString: ({title}) => title,
-    onSelectedItemChange: ({selectedItem}) => {
+    itemToString: item => item?.title ?? null,
+    onSelectedItemChange: changes => {
+      const {selectedItem, highlightedIndex} = changes
+
+      if (!selectedItem || highlightedIndex === -1) return
+
       if (selectedItem.__placeholder__) {
         const trimmedValue = inputValue.trim()
-        if (trimmedValue.length > 0) createNote(trimmedValue)
+        if (trimmedValue.length > 0) {
+          createNote(trimmedValue)
+        }
       } else {
         setActiveNote(selectedItem)
       }
@@ -48,8 +53,13 @@ export const ActionBar = () => {
     <div {...getComboboxProps()} className="action-bar">
       <label {...getLabelProps()}>
         <span className="action-bar__icon">
-          {!selectedItem ? <IconSearch /> : <IconPen />}
+          {isOpen && highlightedIndex === inputItems.length - 1 ? (
+            <IconPen />
+          ) : (
+            <IconSearch />
+          )}
         </span>
+        <span className="sr-only">Search or create notes</span>
       </label>
       <input
         placeholder="Search or create..."
@@ -57,9 +67,9 @@ export const ActionBar = () => {
         type="text"
         {...getInputProps()}
       />
-      <ul {...getMenuProps()} className="action-bar__results">
-        {isOpen &&
-          inputItems.map((item, index) => (
+      {isOpen && (
+        <ul {...getMenuProps()} className="action-bar__results">
+          {inputItems.map((item, index) => (
             <li
               className="action-bar__result"
               data-type={item.__placeholder__ ? 'CREATE' : 'SEARCH'}
@@ -72,7 +82,8 @@ export const ActionBar = () => {
               {item.__placeholder__ ? `'${inputValue}'` : item.title}
             </li>
           ))}
-      </ul>
+        </ul>
+      )}
     </div>
   )
 }

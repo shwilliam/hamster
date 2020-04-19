@@ -15,13 +15,13 @@ export const reducer = (stateAcc, {type, payload}) => {
 
     case 'CREATE_NOTE':
       const notesWithNew = [
-        ...existingNotes,
         {
           id: shortid.generate(),
           title: payload.title,
           content: convertToRaw(ContentState.createFromText('')),
           modified: new Date().toISOString(),
         },
+        ...existingNotes,
       ]
 
       const sortedNotesWithNew = notesWithNew.sort(sortByModified)

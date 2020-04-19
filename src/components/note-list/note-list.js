@@ -1,10 +1,18 @@
-import React, {useContext} from 'react'
+import React, {useContext, useRef, useLayoutEffect} from 'react'
 import {StoreContext, ActiveNoteContext} from '../../context'
 import {formatReadableTimestamp} from '../../utils'
 
 export const NoteList = () => {
-  const {notes} = useContext(StoreContext)
   const {activeNote, setActiveNote} = useContext(ActiveNoteContext)
+  const {notes} = useContext(StoreContext)
+  const prevNotes = useRef(notes)
+
+  useLayoutEffect(() => {
+    if (prevNotes.current.length !== notes.length) {
+      setActiveNote(notes[0])
+      prevNotes.current = notes
+    }
+  }, [notes, setActiveNote])
 
   return (
     <ul className="note-list">
@@ -12,7 +20,7 @@ export const NoteList = () => {
         <li
           key={note.id}
           className="note-list__item-container"
-          data-active={activeNote && activeNote.id === note.id}
+          data-active={activeNote?.id === note.id}
         >
           <button
             type="button"
