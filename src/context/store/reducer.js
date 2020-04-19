@@ -38,6 +38,7 @@ export const reducer = (stateAcc, {type, payload}) => {
       existingNotes[noteIdx] = {
         ...existingNotes[noteIdx],
         content: payload.content,
+        modified: new Date().toISOString(),
       }
       const sortedUpdatedNotes = existingNotes.sort(sortByModified)
 
