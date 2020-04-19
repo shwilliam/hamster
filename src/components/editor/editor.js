@@ -17,24 +17,21 @@ export const Editor = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
 
   useEffect(() => {
-    if (activeNote && previousActiveNote.current !== activeNote.id) {
-      editorRef.current.focus()
-      previousActiveNote.current = activeNote.id
-    }
-  }, [activeNote])
-
-  useEffect(() => {
-    if (activeNote)
-      setEditorState(
-        EditorState.createWithContent(convertFromRaw(activeNote.content)),
-      )
-  }, [activeNote])
-
-  useEffect(() => {
     if (activeNote) {
       updateNote(activeNote.id, convertToRaw(editorState.getCurrentContent()))
     }
   }, [editorState, activeNote, updateNote])
+
+  useEffect(() => {
+    if (activeNote && previousActiveNote.current !== activeNote.id) {
+      editorRef.current.focus()
+      previousActiveNote.current = activeNote.id
+      const updatedEditorState = EditorState.createWithContent(
+        convertFromRaw(activeNote.content),
+      )
+      setEditorState(EditorState.moveFocusToEnd(updatedEditorState))
+    }
+  }, [activeNote, editorState])
 
   const handleKeyCommand = command => {
     const newState = RichUtils.handleKeyCommand(editorState, command)
