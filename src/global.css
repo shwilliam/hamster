@@ -2,7 +2,7 @@
 .info {
   opacity: 0.7;
   font-size: 10px;
-  line-height: 10px;
+  line-height: 0.5;
   padding-bottom: 3px;
 }
 
@@ -43,17 +43,18 @@
 .app__sidebar {
   grid-area: sidebar;
   border-right: 1px solid #dfe2e5;
-  overflow-y: scroll;
+  height: 100%;
+  overflow: hidden;
 }
 
 /* action bar */
 .action-bar {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .action-bar__input {
-  position: absolute;
-  left: 0;
   border: 1px solid #dfe2e5;
   border-radius: 3px;
   width: 100%;
@@ -71,7 +72,44 @@
   width: 17px;
 }
 
+.action-bar__results {
+  z-index: 999;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #dfe2e5;
+  border-radius: 0 0 3px 3px;
+  max-height: 218px;
+  overflow-y: scroll;
+}
+
+.action-bar__result {
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid #dfe2e5;
+}
+
+.action-bar__result[data-type='CREATE']::before {
+  content: 'Create ';
+}
+
 /* note list */
+.hamster {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  z-index: -1;
+}
+
+.note-list {
+  height: 100%;
+  overflow-y: scroll;
+}
+
 .note-list__item-container:hover,
 .note-list__item-container--new,
 .note-list__item-container:not([data-active='true']) .note-list__item:focus {
@@ -120,18 +158,4 @@
   top: -5px;
   display: flex;
   flex-direction: column;
-}
-
-.editor__toast-container {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-.editor__toast-container p {
-  opacity: 0.7;
-  background-color: #fff;
-  border: 1px solid #dfe2e5;
-  border-radius: 3px;
-  padding: 0.5rem;
 }

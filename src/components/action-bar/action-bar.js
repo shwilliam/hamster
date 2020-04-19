@@ -80,7 +80,7 @@ export const ActionBar = () => {
               key={item.id}
               {...getItemProps({item, index})}
             >
-              {item.__placeholder__ ? `'${inputValue}'` : item.title}
+              {item.__placeholder__ ? inputValue : item.title}
             </li>
           ))}
         </ul>

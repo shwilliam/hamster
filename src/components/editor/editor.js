@@ -31,6 +31,7 @@ export const Editor = () => {
       )
       setEditorState(EditorState.moveFocusToEnd(updatedEditorState))
     } else if (
+      // FIXME: not updating note store on style actions
       prevContentText !== editorState.getCurrentContent().getPlainText()
     ) {
       updateNote(activeNote.id, convertToRaw(editorState.getCurrentContent()))
@@ -58,7 +59,7 @@ export const Editor = () => {
 
   if (!activeNote)
     return (
-      <span role="img" aria-label="Hamster">
+      <span className="hamster" role="img" aria-label="Hamster">
         🐹
       </span>
     )
