@@ -29,6 +29,8 @@
 
 .app__header {
   grid-area: header;
+  display: flex;
+  align-items: center;
   background-color: #f5f8fa;
   padding: 1rem;
   border-bottom: 1px solid #dfe2e5;
@@ -49,6 +51,7 @@
 
 /* action bar */
 .action-bar {
+  flex-basis: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -89,6 +92,34 @@
 
 .action-bar__result[data-type='CREATE']::before {
   content: 'Create ';
+}
+
+/* info toggle */
+.info-modal {
+  position: relative;
+}
+
+.info-modal__content {
+  margin: 0.75rem 0;
+}
+
+.info-modal__toggle {
+  display: flex;
+  align-items: center;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin-left: 3px;
+  margin-right: -4px;
+}
+
+.info-modal__close {
+  position: absolute;
+  padding: 5px 10px;
+  top: 0;
+  right: 0;
+  border: none;
+  background-color: transparent;
 }
 
 /* note list */
