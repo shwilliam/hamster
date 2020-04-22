@@ -8,7 +8,6 @@ export const App = () => (
       <div className="app">
         <header className="app__header">
           <ActionBar />
-          <InfoToggle />
         </header>
         <section className="app__sidebar">
           <NoteList />
@@ -16,6 +15,9 @@ export const App = () => (
         <main className="app__content">
           <Editor />
         </main>
+        <aside>
+          <InfoToggle />
+        </aside>
       </div>
     </ActiveNoteProvider>
   </StoreContextProvider>

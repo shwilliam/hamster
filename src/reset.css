@@ -5,8 +5,8 @@
 }
 
 body {
-  font-family: sans-serif;
-  font-size: 15px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
   scroll-behavior: smooth;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
@@ -34,6 +34,8 @@ input,
 select,
 textarea {
   font: inherit;
+  padding: 0;
+  line-height: 1;
 }
 
 ul,
