@@ -5,6 +5,7 @@ import {sortByModified} from '../../utils'
 
 export const reducer = (stateAcc, {type, payload}) => {
   const existingNotes = stateAcc.notes || []
+  let noteIdx
 
   switch (type) {
     case 'GET_ALL_NOTES':
@@ -14,7 +15,7 @@ export const reducer = (stateAcc, {type, payload}) => {
       }
 
     case 'CREATE_NOTE':
-      const notesWithNew = [
+      const updatedNotes = [
         {
           id: shortid.generate(),
           title: payload.title,
@@ -22,29 +23,35 @@ export const reducer = (stateAcc, {type, payload}) => {
           modified: new Date().toISOString(),
         },
         ...existingNotes,
-      ]
+      ].sort(sortByModified)
 
-      const sortedNotesWithNew = notesWithNew.sort(sortByModified)
+      store.set('__hamster-notes__', updatedNotes)
 
-      store.set('__hamster-notes__', sortedNotesWithNew)
-
-      return {...stateAcc, notes: sortedNotesWithNew}
+      return {...stateAcc, notes: updatedNotes}
 
     case 'UPDATE_NOTE':
-      const noteIdx = existingNotes.findIndex(
-        ({id: noteId}) => noteId === payload.id,
-      )
+      noteIdx = existingNotes.findIndex(({id: noteId}) => noteId === payload.id)
 
       existingNotes[noteIdx] = {
         ...existingNotes[noteIdx],
         content: payload.content,
         modified: new Date().toISOString(),
       }
+
       const sortedUpdatedNotes = existingNotes.sort(sortByModified)
 
       store.set('__hamster-notes__', sortedUpdatedNotes)
 
       return {...stateAcc, notes: sortedUpdatedNotes}
+
+    case 'DELETE_NOTE':
+      noteIdx = existingNotes.findIndex(({id: noteId}) => noteId === payload.id)
+
+      existingNotes.splice(noteIdx, 1)
+
+      store.set('__hamster-notes__', existingNotes)
+
+      return {...stateAcc, notes: existingNotes}
 
     default:
       return stateAcc

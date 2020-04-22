@@ -8,15 +8,15 @@ import {
 } from 'draft-js'
 import {stateToMarkdown} from 'draft-js-export-markdown'
 import {ActiveNoteContext, StoreContext} from '../../context'
-import {IconBold, IconItalic, IconUnderline, IconCopy} from '../icon'
+import {IconBold, IconItalic, IconUnderline, IconCopy, IconTrash} from '../icon'
 
 const {clipboard} = window.require('electron')
 
 export const Editor = () => {
   const editorRef = useRef()
-  const {activeNote} = useContext(ActiveNoteContext)
+  const {activeNote, setActiveNote} = useContext(ActiveNoteContext)
   const previousActiveNote = useRef()
-  const {updateNote} = useContext(StoreContext)
+  const {updateNote, deleteNote} = useContext(StoreContext)
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
 
   useEffect(() => {
@@ -67,6 +67,11 @@ export const Editor = () => {
     new Notification('Copied to clipboard!', {
       body: `Markdown content from '${activeNote.title}' copied successfully.`,
     })
+  }
+
+  const handleDeleteNote = () => {
+    deleteNote(activeNote.id)
+    setActiveNote(null)
   }
 
   if (!activeNote)
@@ -121,6 +126,15 @@ export const Editor = () => {
         >
           <span className="sr-only">Copy markdown</span>
           <IconCopy />
+        </button>
+        <button
+          title="Delete note"
+          className="editor__action"
+          type="button"
+          onClick={handleDeleteNote}
+        >
+          <span className="sr-only">Delete note</span>
+          <IconTrash />
         </button>
       </div>
     </section>

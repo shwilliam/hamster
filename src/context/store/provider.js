@@ -15,12 +15,19 @@ export const StoreContextProvider = ({children}) => {
     [],
   )
 
+  const deleteNote = useCallback(
+    id => dispatch({type: 'DELETE_NOTE', payload: {id}}),
+    [],
+  )
+
   useEffect(() => {
     dispatch({type: 'GET_ALL_NOTES'})
   }, [])
 
   return (
-    <StoreContext.Provider value={{...state, createNote, updateNote}}>
+    <StoreContext.Provider
+      value={{...state, createNote, updateNote, deleteNote}}
+    >
       {children}
     </StoreContext.Provider>
   )
