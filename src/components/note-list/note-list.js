@@ -11,11 +11,11 @@ export const NoteList = () => {
   useLayoutEffect(() => {
     if (prevNotes.current.length !== notes.length) {
       setActiveNote(notes[0])
-      prevNotes.current = notes
-
       noteListRef.current.scrollTo(0, 0)
+
+      prevNotes.current = notes
     }
-  }, [notes, setActiveNote])
+  }, [notes, setActiveNote, activeNote])
 
   return (
     <ul className="note-list" ref={noteListRef}>

@@ -1,15 +1,51 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState, useCallback} from 'react'
 import {useCombobox} from 'downshift'
 import {StoreContext, ActiveNoteContext} from '../../context'
 import {IconSearch, IconPen} from '../index'
 
-const placeholderNote = {title: '', id: 0, __placeholder__: true}
+const placeholderNote = {
+  title: '',
+  id: null,
+  __placeholder__: true,
+}
 
 export const ActionBar = () => {
   const {notes, createNote} = useContext(StoreContext)
   const {setActiveNote} = useContext(ActiveNoteContext)
-
   const [inputItems, setInputItems] = useState([...notes, placeholderNote])
+  const stateReducer = useCallback(
+    (state, actionAndChanges) => {
+      switch (actionAndChanges.type) {
+        // on select
+        case useCombobox.stateChangeTypes.ItemClick:
+        case useCombobox.stateChangeTypes.InputKeyDownEnter:
+        case useCombobox.stateChangeTypes.InputBlur:
+          const {changes} = actionAndChanges
+          const {selectedItem} = changes
+
+          if (!selectedItem || changes?.highlightedIndex === -1)
+            return actionAndChanges.changes
+
+          if (selectedItem.__placeholder__) {
+            const trimmedValue = state.inputValue.trim()
+            if (trimmedValue.length > 0) {
+              createNote(trimmedValue)
+            }
+          } else {
+            setActiveNote(selectedItem)
+            window[`note-${selectedItem.id}`].scrollIntoView()
+          }
+
+          return {
+            ...actionAndChanges.changes,
+            inputValue: '',
+          }
+        default:
+          return actionAndChanges.changes
+      }
+    },
+    [createNote, setActiveNote],
+  )
   const {
     isOpen,
     inputValue,
@@ -21,22 +57,8 @@ export const ActionBar = () => {
     getItemProps,
   } = useCombobox({
     items: inputItems,
+    stateReducer,
     itemToString: item => item?.title ?? null,
-    onSelectedItemChange: changes => {
-      const {selectedItem, highlightedIndex} = changes
-
-      if (!selectedItem || highlightedIndex === -1) return
-
-      if (selectedItem.__placeholder__) {
-        const trimmedValue = inputValue.trim()
-        if (trimmedValue.length > 0) {
-          createNote(trimmedValue)
-        }
-      } else {
-        setActiveNote(selectedItem)
-        window[`note-${selectedItem.id}`].scrollIntoView()
-      }
-    },
     onInputValueChange: ({inputValue}) => {
       setInputItems([
         ...notes.filter(
