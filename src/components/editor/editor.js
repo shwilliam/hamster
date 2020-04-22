@@ -6,8 +6,11 @@ import {
   convertFromRaw,
   convertToRaw,
 } from 'draft-js'
+import {stateToMarkdown} from 'draft-js-export-markdown'
 import {ActiveNoteContext, StoreContext} from '../../context'
-import {IconBold, IconItalic, IconUnderline} from '../icon'
+import {IconBold, IconItalic, IconUnderline, IconCopy} from '../icon'
+
+const {clipboard} = window.require('electron')
 
 export const Editor = () => {
   const editorRef = useRef()
@@ -57,6 +60,15 @@ export const Editor = () => {
   const toggleUnderline = () =>
     setEditorState(RichUtils.toggleInlineStyle(editorState, 'UNDERLINE'))
 
+  const copyMdContent = () => {
+    const markdownContent = stateToMarkdown(editorState.getCurrentContent())
+
+    clipboard.writeText(markdownContent, 'selection')
+    new Notification('Copied to clipboard!', {
+      body: `Markdown content from '${activeNote.title}' copied successfully.`,
+    })
+  }
+
   if (!activeNote)
     return (
       <span className="hamster" role="img" aria-label="Hamster">
@@ -100,6 +112,15 @@ export const Editor = () => {
         >
           <span className="sr-only">Toggle underline</span>
           <IconUnderline />
+        </button>
+        <button
+          title="Copy markdown"
+          className="editor__action"
+          type="button"
+          onClick={copyMdContent}
+        >
+          <span className="sr-only">Copy markdown</span>
+          <IconCopy />
         </button>
       </div>
     </section>
