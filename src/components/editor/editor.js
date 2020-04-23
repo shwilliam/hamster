@@ -8,13 +8,22 @@ import {
 } from 'draft-js'
 import {stateToMarkdown} from 'draft-js-export-markdown'
 import {ActiveNoteContext, StoreContext} from '../../context'
-import {IconBold, IconItalic, IconUnderline, IconCopy, IconTrash} from '../icon'
+import {
+  IconBold,
+  IconItalic,
+  IconUnderline,
+  IconCopy,
+  IconTrash,
+  IconEdit,
+} from '../icon'
 
 const {clipboard} = window.require('electron')
 
 export const Editor = () => {
   const editorRef = useRef()
-  const {activeNote, setActiveNote} = useContext(ActiveNoteContext)
+  const {activeNote, clearActiveNote, setEditingTrue, isEditing} = useContext(
+    ActiveNoteContext,
+  )
   const previousActiveNote = useRef()
   const {updateNote, deleteNote} = useContext(StoreContext)
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
@@ -71,7 +80,7 @@ export const Editor = () => {
 
   const handleDeleteNote = () => {
     deleteNote(activeNote.id)
-    setActiveNote(null)
+    clearActiveNote()
   }
 
   if (!activeNote)
@@ -83,14 +92,17 @@ export const Editor = () => {
 
   return (
     <section className="editor">
-      <DraftEditor
-        ref={editorRef}
-        editorState={editorState}
-        onChange={setEditorState}
-        handleKeyCommand={handleKeyCommand}
-      />
-
       <div className="editor__actions">
+        <button
+          title="Edit title"
+          className="editor__action"
+          type="button"
+          data-active={isEditing}
+          onClick={setEditingTrue}
+        >
+          <span className="sr-only">Edit title</span>
+          <IconEdit />
+        </button>
         <button
           title="Bold (Command+B)"
           className="editor__action"
@@ -136,6 +148,15 @@ export const Editor = () => {
           <span className="sr-only">Delete note</span>
           <IconTrash />
         </button>
+      </div>
+
+      <div className="editor__input">
+        <DraftEditor
+          ref={editorRef}
+          editorState={editorState}
+          onChange={setEditorState}
+          handleKeyCommand={handleKeyCommand}
+        />
       </div>
     </section>
   )

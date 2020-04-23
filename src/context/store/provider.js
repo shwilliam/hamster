@@ -15,6 +15,11 @@ export const StoreContextProvider = ({children}) => {
     [],
   )
 
+  const updateNoteTitle = useCallback(
+    (id, title) => dispatch({type: 'UPDATE_NOTE_TITLE', payload: {id, title}}),
+    [],
+  )
+
   const deleteNote = useCallback(
     id => dispatch({type: 'DELETE_NOTE', payload: {id}}),
     [],
@@ -26,7 +31,7 @@ export const StoreContextProvider = ({children}) => {
 
   return (
     <StoreContext.Provider
-      value={{...state, createNote, updateNote, deleteNote}}
+      value={{...state, createNote, updateNote, updateNoteTitle, deleteNote}}
     >
       {children}
     </StoreContext.Provider>

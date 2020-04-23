@@ -11,7 +11,7 @@ const placeholderNote = {
 
 export const ActionBar = () => {
   const {notes, createNote} = useContext(StoreContext)
-  const {setActiveNote} = useContext(ActiveNoteContext)
+  const {updateActiveNote} = useContext(ActiveNoteContext)
   const [inputItems, setInputItems] = useState([...notes, placeholderNote])
   const stateReducer = useCallback(
     (state, actionAndChanges) => {
@@ -35,7 +35,7 @@ export const ActionBar = () => {
               createNote(trimmedValue)
             }
           } else {
-            setActiveNote(selectedItem)
+            updateActiveNote(selectedItem)
             window[`note-${selectedItem.id}`].scrollIntoView()
           }
 
@@ -47,7 +47,7 @@ export const ActionBar = () => {
           return actionAndChanges.changes
       }
     },
-    [createNote, setActiveNote],
+    [createNote, updateActiveNote],
   )
   const {
     isOpen,
