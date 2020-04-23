@@ -17,7 +17,12 @@ export const InfoToggle = () => {
         <IconInfo />
       </button>
 
-      <Dialog isOpen={isOpen} onDismiss={close} className="info-modal">
+      <Dialog
+        isOpen={isOpen}
+        onDismiss={close}
+        className="info-modal"
+        aria-label="Project info"
+      >
         <button className="info-modal__close" onClick={close}>
           <span className="sr-only">Close</span>
           <span aria-hidden>
