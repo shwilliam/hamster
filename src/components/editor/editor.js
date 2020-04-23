@@ -23,8 +23,7 @@ export const Editor = () => {
     if (!activeNote) return
 
     const prevContent = activeNote.content
-    const prevContentText =
-      prevContent && convertFromRaw(prevContent).getPlainText()
+    const prevContentObj = prevContent && convertFromRaw(prevContent)
 
     if (previousActiveNote.current !== activeNote.id) {
       editorRef.current.focus()
@@ -34,8 +33,9 @@ export const Editor = () => {
       )
       setEditorState(EditorState.moveFocusToEnd(updatedEditorState))
     } else if (
-      // FIXME: not updating note store on style actions
-      prevContentText !== editorState.getCurrentContent().getPlainText()
+      // TODO: debounce/throttle
+      JSON.stringify(prevContentObj) !==
+      JSON.stringify(editorState.getCurrentContent())
     ) {
       updateNote(activeNote.id, convertToRaw(editorState.getCurrentContent()))
     }
