@@ -14,16 +14,27 @@ import {
   IconUnderline,
   IconCopy,
   IconTrash,
-  IconEdit,
+  IconList,
+  IconHash,
+  IconCode,
 } from '../icon'
 
 const {clipboard} = window.require('electron')
 
+const BLOCK_TYPES = [
+  {label: 'UL', style: 'unordered-list-item', icon: IconList},
+  {label: 'OL', style: 'ordered-list-item', icon: IconHash},
+  {label: 'H1', style: 'header-one'},
+  {label: 'H2', style: 'header-two'},
+  {label: 'H3', style: 'header-three'},
+  {label: 'H4', style: 'header-four'},
+  {label: 'H5', style: 'header-five'},
+  {label: 'H6', style: 'header-six'},
+]
+
 export const Editor = () => {
   const editorRef = useRef()
-  const {activeNote, clearActiveNote, setEditingTrue, isEditing} = useContext(
-    ActiveNoteContext,
-  )
+  const {activeNote, clearActiveNote} = useContext(ActiveNoteContext)
   const previousActiveNote = useRef()
   const {updateNote, deleteNote} = useContext(StoreContext)
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
@@ -69,6 +80,12 @@ export const Editor = () => {
   const toggleUnderline = () =>
     setEditorState(RichUtils.toggleInlineStyle(editorState, 'UNDERLINE'))
 
+  const toggleCode = () =>
+    setEditorState(RichUtils.toggleInlineStyle(editorState, 'CODE'))
+
+  const toggleBlock = style =>
+    setEditorState(RichUtils.toggleBlockType(editorState, style))
+
   const copyMdContent = () => {
     const markdownContent = stateToMarkdown(editorState.getCurrentContent())
 
@@ -93,16 +110,6 @@ export const Editor = () => {
   return (
     <section className="editor">
       <div className="editor__actions">
-        <button
-          title="Edit title"
-          className="editor__action"
-          type="button"
-          data-active={isEditing}
-          onClick={setEditingTrue}
-        >
-          <span className="sr-only">Edit title</span>
-          <IconEdit />
-        </button>
         <button
           title="Bold (Command+B)"
           className="editor__action"
@@ -130,6 +137,33 @@ export const Editor = () => {
           <span className="sr-only">Toggle underline</span>
           <IconUnderline />
         </button>
+        <button
+          title="Toggle code"
+          className="editor__action"
+          type="button"
+          onClick={toggleCode}
+        >
+          <span className="sr-only">Toggle code</span>
+          <IconCode />
+        </button>
+        {BLOCK_TYPES.map(({label, style, icon: Icon}) => (
+          <button
+            key={style}
+            title={`Toggle ${label}`}
+            className="editor__action"
+            type="button"
+            onClick={() => toggleBlock(style)}
+          >
+            {Icon ? (
+              <>
+                <span className="sr-only">Toggle {label}</span>
+                <Icon />
+              </>
+            ) : (
+              label
+            )}
+          </button>
+        ))}
         <button
           title="Copy markdown"
           className="editor__action"

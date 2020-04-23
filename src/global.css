@@ -1,10 +1,14 @@
 :root {
   --ui__primary: #d9d7d9;
-  --ui__secondary: #e8e8e8;
-  --ui__secondary--active: #b0b0b0;
-  --ui__secondary--hover: #f1f3f2;
+
+  --ui__secondary: #f5f5f5;
+  --ui__secondary--active: #979797;
+  --ui__secondary--hover: #c0c0c0;
+
   --ui__accent: #838384;
-  --text__color: #090909;
+
+  --text__color: #5b5b5b;
+  --text__color--inverted: #ffffff;
 }
 
 /* utils */
@@ -51,7 +55,6 @@
 
 .app__content {
   grid-area: content;
-  padding: 14px;
   overflow-y: scroll;
 }
 
@@ -157,11 +160,7 @@
 
 /* note list */
 .hamster {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -174,14 +173,35 @@
   overflow-y: scroll;
 }
 
+.note-list__item-container {
+  position: relative;
+}
+
+.note-list__label--editable {
+  width: 100%;
+  background-color: transparent;
+}
+
 .note-list__item-container:hover,
 .note-list__item-container--new,
 .note-list__item-container:not([data-active='true']) .note-list__item:focus {
   background-color: var(--ui__secondary--hover);
 }
 
+.note-list__item-container:hover .note-list__label,
+.note-list__item-container--new .note-list__label,
+.note-list__item-container:not([data-active='true'])
+  .note-list__item:focus
+  .note-list__label {
+  color: var(--text__color--inverted);
+}
+
 .note-list__item-container[data-active='true'] {
   background-color: var(--ui__secondary--active);
+}
+
+.note-list__item-container[data-active='true'] .note-list__label {
+  color: var(--text__color--inverted);
 }
 
 .note-list__item {
@@ -196,26 +216,88 @@
 /* editor */
 .editor {
   position: relative;
-  font-family: 'Courier New', Courier, monospace;
-  padding-right: 35px;
 }
 
+.editor ol,
+.editor ul {
+  padding: 0 1rem;
+}
+
+.editor ol {
+  list-style: decimal;
+}
+
+.editor ul {
+  list-style: square;
+}
+
+.editor__input {
+  padding: 14px;
+}
+
+/* action icons */
+
+.note-list__action {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.note-list__action,
 .editor__action {
   display: inline-block;
-  padding: 7px;
-  background-color: transparent;
+  padding: 4px 3px 1px 3px;
+  margin: 4px 7px 3px 7px;
   border: none;
+  border-radius: 5px;
+  background-color: transparent;
   cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
 }
 
+.note-list__action:hover,
+.editor__action:hover {
+  background-color: var(--ui__secondary--hover);
+}
+
+.note-list__action:active {
+  background-color: var(--ui__secondary);
+}
+
+.note-list__action[data-active='true'] {
+  display: none;
+}
+
+.note-list__action:active svg {
+  color: var(--text__color);
+}
+
+.editor__action:active,
+.editor__action[data-active='true'] {
+  background-color: var(--ui__secondary--active);
+}
+
+.note-list__action svg,
 .editor__action svg {
-  width: 15px;
+  width: 14px;
+  height: 14px;
+}
+
+.note-list__action svg,
+.editor__action:hover svg,
+.editor__action:active svg,
+.editor__action[data-active='true'] svg,
+.editor__action:hover,
+.editor__action:active,
+.editor__action[data-active='true'] {
+  color: var(--text__color--inverted);
 }
 
 .editor__actions {
-  position: absolute;
-  right: 0;
-  top: -5px;
+  padding: 0 7px 0 7px;
+  background-color: var(--ui__secondary);
+  border-bottom: 1px solid var(--ui__accent);
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
 }

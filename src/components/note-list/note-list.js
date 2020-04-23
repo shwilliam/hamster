@@ -1,13 +1,17 @@
 import React, {useContext, useRef, useLayoutEffect} from 'react'
 import {StoreContext, ActiveNoteContext} from '../../context'
 import {formatReadableTimestamp} from '../../utils'
-import {ContentEditable} from '../index'
+import {ContentEditable, IconEdit} from '../index'
 
 export const NoteList = () => {
   const noteListRef = useRef()
-  const {activeNote, isEditing, updateActiveNote, setEditingFalse} = useContext(
-    ActiveNoteContext,
-  )
+  const {
+    activeNote,
+    isEditing,
+    updateActiveNote,
+    setEditingFalse,
+    setEditingTrue,
+  } = useContext(ActiveNoteContext)
   const {notes, updateNoteTitle} = useContext(StoreContext)
   const prevNotes = useRef(notes)
 
@@ -49,6 +53,18 @@ export const NoteList = () => {
               onSave={title => handleNoteTitleChange(note.id, title)}
             />
           </button>
+          {activeNote?.id === note.id && (
+            <button
+              title="Edit title"
+              className="note-list__action"
+              type="button"
+              onClick={setEditingTrue}
+              data-active={isEditing}
+            >
+              <span className="sr-only">Edit title</span>
+              <IconEdit />
+            </button>
+          )}
         </li>
       ))}
     </ul>
