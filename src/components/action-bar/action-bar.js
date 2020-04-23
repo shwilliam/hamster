@@ -24,7 +24,10 @@ export const ActionBar = () => {
           const {selectedItem} = changes
 
           if (!selectedItem || changes?.highlightedIndex === -1)
-            return actionAndChanges.changes
+            return {
+              ...actionAndChanges.changes,
+              inputValue: '',
+            }
 
           if (selectedItem.__placeholder__) {
             const trimmedValue = state.inputValue.trim()
