@@ -1,25 +1,9 @@
 import React, {useReducer} from 'react'
 import {ActiveNoteContext} from './context'
-
-const stateReducer = (state, action) => {
-  switch (action.type) {
-    case 'UPDATE_ACTIVE_NOTE':
-      if (state?.activeNote?.id === action.payload.note.id) {
-        return state
-      } else {
-        return {activeNote: action.payload.note, isEditing: false}
-      }
-
-    case 'UPDATE_EDITING':
-      return {...state, isEditing: action.payload.isEditing}
-
-    default:
-      return state
-  }
-}
+import {reducer} from './reducer'
 
 export const ActiveNoteProvider = ({children}) => {
-  const [state, dispatch] = useReducer(stateReducer, {
+  const [state, dispatch] = useReducer(reducer, {
     activeNote: null,
     isEditing: false,
   })
