@@ -1,13 +1,13 @@
 import React from 'react'
 import {
-  StoreContextProvider,
+  NotesContextProvider,
   ActiveNoteProvider,
   GistContextProvider,
 } from './context'
 import {ActionBar, NoteList, Editor, InfoToggle} from './components'
 
 export const App = () => (
-  <StoreContextProvider>
+  <NotesContextProvider>
     <ActiveNoteProvider>
       <GistContextProvider>
         <div className="app">
@@ -26,5 +26,5 @@ export const App = () => (
         </div>
       </GistContextProvider>
     </ActiveNoteProvider>
-  </StoreContextProvider>
+  </NotesContextProvider>
 )

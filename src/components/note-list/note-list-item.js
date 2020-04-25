@@ -1,5 +1,5 @@
 import React, {useContext, useMemo} from 'react'
-import {StoreContext, ActiveNoteContext} from '../../context'
+import {NotesContext, ActiveNoteContext} from '../../context'
 import {formatReadableTimestamp} from '../../utils'
 import {ContentEditable, IconEdit} from '../index'
 
@@ -13,7 +13,7 @@ export const NoteListItem = ({
   const {updateActiveNote, setEditingTrue, setEditingFalse} = useContext(
     ActiveNoteContext,
   )
-  const {updateNoteTitle} = useContext(StoreContext)
+  const {updateNoteTitle} = useContext(NotesContext)
 
   const handleNoteTitleChange = title => {
     updateNoteTitle(note.id, title)

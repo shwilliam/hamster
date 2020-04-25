@@ -1,6 +1,6 @@
 import React, {useContext, useState, useCallback} from 'react'
 import {useCombobox} from 'downshift'
-import {StoreContext, ActiveNoteContext} from '../../context'
+import {NotesContext, ActiveNoteContext} from '../../context'
 import {IconSearch, IconPen} from '../index'
 
 const placeholderNote = {
@@ -10,7 +10,7 @@ const placeholderNote = {
 }
 
 export const ActionBar = () => {
-  const {notes, createNote} = useContext(StoreContext)
+  const {notes, createNote} = useContext(NotesContext)
   const {updateActiveNote} = useContext(ActiveNoteContext)
   const [inputItems, setInputItems] = useState([...notes, placeholderNote])
   const stateReducer = useCallback(

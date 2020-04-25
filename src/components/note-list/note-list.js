@@ -1,5 +1,5 @@
 import React, {useContext, useRef, useLayoutEffect} from 'react'
-import {StoreContext, ActiveNoteContext} from '../../context'
+import {NotesContext, ActiveNoteContext} from '../../context'
 import {NoteListItem} from './note-list-item'
 
 export const NoteList = () => {
@@ -7,7 +7,7 @@ export const NoteList = () => {
   const {activeNote, updateActiveNote, isEditing} = useContext(
     ActiveNoteContext,
   )
-  const {notes} = useContext(StoreContext)
+  const {notes} = useContext(NotesContext)
   const prevNotes = useRef(notes)
 
   useLayoutEffect(() => {

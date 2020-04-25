@@ -1,8 +1,8 @@
 import React, {useReducer, useEffect, useCallback} from 'react'
-import {StoreContext} from './context'
+import {NotesContext} from './context'
 import {reducer} from './reducer'
 
-export const StoreContextProvider = ({children}) => {
+export const NotesContextProvider = ({children}) => {
   const [state, dispatch] = useReducer(reducer, {notes: []})
 
   const createNote = useCallback(
@@ -30,10 +30,10 @@ export const StoreContextProvider = ({children}) => {
   }, [])
 
   return (
-    <StoreContext.Provider
+    <NotesContext.Provider
       value={{...state, createNote, updateNote, updateNoteTitle, deleteNote}}
     >
       {children}
-    </StoreContext.Provider>
+    </NotesContext.Provider>
   )
 }

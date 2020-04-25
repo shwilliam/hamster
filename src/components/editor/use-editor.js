@@ -1,7 +1,7 @@
 import {useRef, useContext, useState, useEffect} from 'react'
 import {EditorState, RichUtils, convertFromRaw, convertToRaw} from 'draft-js'
 import {stateToMarkdown} from 'draft-js-export-markdown'
-import {ActiveNoteContext, StoreContext, GistContext} from '../../context'
+import {ActiveNoteContext, NotesContext, GistContext} from '../../context'
 import {useGistSelect} from './use-gist-select'
 
 const {clipboard} = window.require('electron')
@@ -10,7 +10,7 @@ export const useEditor = ref => {
   const previousActiveNote = useRef()
 
   const {activeNote, clearActiveNote} = useContext(ActiveNoteContext)
-  const {updateNote, deleteNote} = useContext(StoreContext)
+  const {updateNote, deleteNote} = useContext(NotesContext)
   const {gists, syncGist, onError} = useContext(GistContext)
 
   const {
