@@ -1,104 +1,53 @@
-import React, {useContext, useState, useEffect, useRef} from 'react'
-import {
-  Editor as DraftEditor,
-  EditorState,
-  RichUtils,
-  convertFromRaw,
-  convertToRaw,
-} from 'draft-js'
-import {stateToMarkdown} from 'draft-js-export-markdown'
-import {ActiveNoteContext, StoreContext} from '../../context'
+import React, {useRef, useEffect, useContext} from 'react'
+import {Editor as DraftEditor} from 'draft-js'
+import {ActiveNoteContext, GistContext} from '../../context'
 import {
   IconBold,
   IconItalic,
   IconUnderline,
   IconCopy,
   IconTrash,
-  IconList,
-  IconHash,
   IconCode,
+  IconGitHub,
 } from '../icon'
-
-const {clipboard} = window.require('electron')
-
-const BLOCK_TYPES = [
-  {label: 'UL', style: 'unordered-list-item', icon: IconList},
-  {label: 'OL', style: 'ordered-list-item', icon: IconHash},
-  {label: 'H1', style: 'header-one'},
-  {label: 'H2', style: 'header-two'},
-  {label: 'H3', style: 'header-three'},
-  {label: 'H4', style: 'header-four'},
-  {label: 'H5', style: 'header-five'},
-  {label: 'H6', style: 'header-six'},
-]
+import {useEditor} from './use-editor'
+import {BLOCK_TYPES} from './block-types'
+import {EditorAction} from './editor-action'
+import {useGistSelect} from './use-gist-select'
 
 export const Editor = () => {
   const editorRef = useRef()
-  const {activeNote, clearActiveNote} = useContext(ActiveNoteContext)
-  const previousActiveNote = useRef()
-  const {updateNote, deleteNote} = useContext(StoreContext)
-  const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  const gistInitRef = useRef()
+  const {activeNote} = useContext(ActiveNoteContext)
+  const {init, octokit, gists, error} = useContext(GistContext)
+  const {selectedGist, selectedFilename, gistSyncing} = useGistSelect(gists)
+  const {
+    editorState,
+    setEditorState,
+    handleKeyCommand,
+    toggleBold,
+    toggleItalic,
+    toggleUnderline,
+    toggleCode,
+    toggleBlock,
+    copyMdContent,
+    handleDeleteNote,
+
+    gistSyncOptionsOpen,
+    toggleGistSyncOptions,
+    handleGistInputChange,
+    handleGistFileInputChange,
+    handleGistSyncSubmit,
+  } = useEditor(editorRef)
+
+  const handleGistInitSubmit = e => {
+    e.preventDefault()
+    init(gistInitRef.current.value)
+  }
 
   useEffect(() => {
-    if (!activeNote) return
-
-    const prevContent = activeNote.content
-    const prevContentObj = prevContent && convertFromRaw(prevContent)
-
-    if (previousActiveNote.current !== activeNote.id) {
-      editorRef.current.focus()
-      previousActiveNote.current = activeNote.id
-      const updatedEditorState = EditorState.createWithContent(
-        convertFromRaw(activeNote.content),
-      )
-      setEditorState(EditorState.moveFocusToEnd(updatedEditorState))
-    } else if (
-      // TODO: debounce/throttle
-      JSON.stringify(prevContentObj) !==
-      JSON.stringify(editorState.getCurrentContent())
-    ) {
-      updateNote(activeNote.id, convertToRaw(editorState.getCurrentContent()))
-    }
-  }, [activeNote, editorState, updateNote])
-
-  const handleKeyCommand = command => {
-    const newState = RichUtils.handleKeyCommand(editorState, command)
-
-    if (newState) {
-      setEditorState(newState)
-      return 'handled'
-    }
-    return 'not-handled'
-  }
-
-  const toggleBold = () =>
-    setEditorState(RichUtils.toggleInlineStyle(editorState, 'BOLD'))
-
-  const toggleItalic = () =>
-    setEditorState(RichUtils.toggleInlineStyle(editorState, 'ITALIC'))
-
-  const toggleUnderline = () =>
-    setEditorState(RichUtils.toggleInlineStyle(editorState, 'UNDERLINE'))
-
-  const toggleCode = () =>
-    setEditorState(RichUtils.toggleInlineStyle(editorState, 'CODE'))
-
-  const toggleBlock = style =>
-    setEditorState(RichUtils.toggleBlockType(editorState, style))
-
-  const copyMdContent = () => {
-    const markdownContent = stateToMarkdown(editorState.getCurrentContent())
-
-    clipboard.writeText(markdownContent, 'selection')
-    new Notification('Copied to clipboard!', {
-      body: `Markdown content from '${activeNote.title}' copied successfully.`,
-    })
-  }
-
-  const handleDeleteNote = () => {
-    deleteNote(activeNote.id)
-    clearActiveNote()
-  }
+    if (gistInitRef.current && error) gistInitRef.current.value = ''
+  }, [error])
 
   if (!activeNote)
     return (
@@ -110,78 +59,150 @@ export const Editor = () => {
   return (
     <section className="editor">
       <div className="editor__actions">
-        <button
+        <EditorAction
           title="Bold (Command+B)"
-          className="editor__action"
-          type="button"
           onClick={toggleBold}
+          label="Toggle bold"
         >
-          <span className="sr-only">Toggle bold</span>
           <IconBold />
-        </button>
-        <button
+        </EditorAction>
+        <EditorAction
           title="Italic (Command+I)"
-          className="editor__action"
-          type="button"
           onClick={toggleItalic}
+          label="Toggle italic"
         >
-          <span className="sr-only">Toggle italic</span>
           <IconItalic />
-        </button>
-        <button
+        </EditorAction>
+        <EditorAction
           title="Underline (Command+U)"
-          className="editor__action"
-          type="button"
           onClick={toggleUnderline}
+          label="Toggle underline"
         >
-          <span className="sr-only">Toggle underline</span>
           <IconUnderline />
-        </button>
-        <button
+        </EditorAction>
+        <EditorAction
           title="Toggle code"
-          className="editor__action"
-          type="button"
           onClick={toggleCode}
+          label="Toggle code"
         >
-          <span className="sr-only">Toggle code</span>
           <IconCode />
-        </button>
+        </EditorAction>
         {BLOCK_TYPES.map(({label, style, icon: Icon}) => (
-          <button
+          <EditorAction
             key={style}
             title={`Toggle ${label}`}
-            className="editor__action"
-            type="button"
             onClick={() => toggleBlock(style)}
+            label={`Toggle ${label}`}
           >
-            {Icon ? (
-              <>
-                <span className="sr-only">Toggle {label}</span>
-                <Icon />
-              </>
-            ) : (
-              label
-            )}
-          </button>
+            {Icon ? <Icon /> : label}
+          </EditorAction>
         ))}
-        <button
+        <EditorAction
           title="Copy markdown"
-          className="editor__action"
-          type="button"
           onClick={copyMdContent}
+          label="Copy markdown"
         >
-          <span className="sr-only">Copy markdown</span>
           <IconCopy />
-        </button>
-        <button
-          title="Delete note"
-          className="editor__action"
-          type="button"
-          onClick={handleDeleteNote}
+        </EditorAction>
+        <EditorAction
+          title="Save to GitHub gist"
+          onClick={toggleGistSyncOptions}
+          label="Save to GitHub gist"
+          data-active={gistSyncOptionsOpen}
         >
-          <span className="sr-only">Delete note</span>
+          <IconGitHub />
+        </EditorAction>
+        <EditorAction
+          title="Delete note"
+          onClick={handleDeleteNote}
+          label="Delete note"
+        >
           <IconTrash />
-        </button>
+        </EditorAction>
+
+        <div className="editor__actions-row">
+          {gistSyncOptionsOpen &&
+            (octokit && gists.length && !error ? (
+              <form
+                onSubmit={handleGistSyncSubmit}
+                className="gist-select__container"
+              >
+                <label className="gist-select__input-wrapper">
+                  <span className="sr-only">Select a gist to view files</span>
+
+                  <select
+                    className="gist-select__input"
+                    value={
+                      selectedGist
+                        ? gists.findIndex(({id}) => id === selectedGist.id)
+                        : gists[0]
+                    }
+                    onChange={handleGistInputChange}
+                  >
+                    {gists?.map((gist, idx) => (
+                      <option key={gist.id} value={idx}>
+                        {gist.description}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="gist-select__input-wrapper">
+                  <span className="sr-only">Select a file to sync to</span>
+
+                  <select
+                    className="gist-select__input"
+                    value={
+                      selectedFilename ||
+                      Object.keys(selectedGist?.files || gists[0].files)[0]
+                    }
+                    onChange={handleGistFileInputChange}
+                  >
+                    {Object.keys(selectedGist?.files || gists[0].files).map(
+                      (filename, idx) => (
+                        <option key={`${filename}${idx}`} value={filename}>
+                          {filename}
+                        </option>
+                      ),
+                    )}
+                  </select>
+                </label>
+
+                <button
+                  className="gist-select__submit"
+                  type="submit"
+                  disabled={gistSyncing}
+                >
+                  Save
+                </button>
+              </form>
+            ) : (
+              <form
+                className="gist-select__container"
+                onSubmit={handleGistInitSubmit}
+              >
+                <label className="gist-select__input-wrapper">
+                  {/* TODO: note gist priviledges */}
+                  <span className="sr-only">Enter your GitHub secret</span>
+                  <input
+                    ref={gistInitRef}
+                    type="text"
+                    className="gist-select__input"
+                    placeholder="Enter your GitHub secret..."
+                    required
+                  />
+                </label>
+
+                <button
+                  type="submit"
+                  className="gist-select__submit"
+                  disabled={octokit && !gists.length && !error}
+                >
+                  Save
+                </button>
+              </form>
+            ))}
+        </div>
       </div>
 
       <div className="editor__input">

@@ -1,6 +1,6 @@
 import {ContentState, convertToRaw} from 'draft-js'
 import shortid from 'shortid'
-import {store} from './store'
+import {store} from '../../store'
 import {sortByModified} from '../../utils'
 
 export const reducer = (stateAcc, {type, payload}) => {

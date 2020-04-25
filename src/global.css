@@ -301,3 +301,40 @@
   display: flex;
   flex-wrap: wrap;
 }
+
+.editor__actions-row {
+  width: 100%;
+}
+
+.gist-select__container {
+  font-size: 0.8rem;
+  display: flex;
+  border-top: 1px solid var(--ui__accent);
+  padding: 7px 0;
+}
+
+.gist-select__input {
+  width: 100%;
+  padding: 0.2rem 7px;
+  border: 1px solid var(--ui__accent);
+  border-radius: 5px;
+}
+
+.gist-select__input-wrapper {
+  width: 50%;
+  padding: 0 7px;
+}
+
+.gist-select__submit {
+  cursor: pointer;
+  padding: 0.2rem 7px;
+  margin: 0 7px;
+  border: 1px solid var(--ui__accent);
+  border-radius: 5px;
+}
+
+.gist-select__message {
+  padding: 3.25px 7px;
+  margin: 0 7px;
+  /* padding: 9.5px 10px; */
+}
