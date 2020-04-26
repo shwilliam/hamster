@@ -11,7 +11,7 @@ export const App = () => (
     <ActiveNoteProvider>
       <GistContextProvider>
         <div className="app">
-          <header className="app__header">
+          <header className="small app__header">
             <ActionBar />
           </header>
           <section className="app__sidebar">

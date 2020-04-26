@@ -1,5 +1,6 @@
-import React, {useRef, useEffect, useContext} from 'react'
+import React, {useRef, useEffect, useContext, useState} from 'react'
 import {Editor as DraftEditor} from 'draft-js'
+import {stateToMarkdown} from 'draft-js-export-markdown'
 import {ActiveNoteContext, GistContext} from '../../context'
 import {
   IconBold,
@@ -9,11 +10,13 @@ import {
   IconTrash,
   IconCode,
   IconGitHub,
+  IconSave,
 } from '../icon'
 import {useEditor} from './use-editor'
 import {BLOCK_TYPES} from './block-types'
 import {EditorAction} from './editor-action'
 import {useGistSelect} from './use-gist-select'
+import {useSaveToFilesystem} from './use-save-to-filesystem'
 
 export const Editor = () => {
   const editorRef = useRef()
@@ -40,9 +43,27 @@ export const Editor = () => {
     handleGistSyncSubmit,
   } = useEditor(editorRef)
 
+  const {
+    open: saveToFilesystemOpen,
+    toggleOpen: toggleSaveToFilesystem,
+    handleSave: handleSaveToFilesystem,
+    filename: saveToFilesystemFilename,
+    handleFilenameChange: handleSaveToFilesystemFilenameChange,
+  } = useSaveToFilesystem({initialFilename: activeNote?.title})
+
   const handleGistInitSubmit = e => {
     e.preventDefault()
     init(gistInitRef.current.value)
+  }
+
+  const handleFilenameInputChange = e => {
+    handleSaveToFilesystemFilenameChange(e.target.value)
+  }
+
+  const handleSaveToFilesystemSubmit = e => {
+    e.preventDefault()
+    handleSaveToFilesystem(stateToMarkdown(editorState.getCurrentContent()))
+    toggleSaveToFilesystem() // TODO: delay toggle until save success
   }
 
   useEffect(() => {
@@ -58,7 +79,7 @@ export const Editor = () => {
 
   return (
     <section className="editor">
-      <div className="editor__actions">
+      <div className="pad--h editor__actions">
         <EditorAction
           title="Bold (Command+B)"
           onClick={toggleBold}
@@ -113,6 +134,14 @@ export const Editor = () => {
           <IconGitHub />
         </EditorAction>
         <EditorAction
+          title="Save to filesystem"
+          onClick={toggleSaveToFilesystem}
+          label="Save to filesystem"
+          data-active={saveToFilesystemOpen}
+        >
+          <IconSave />
+        </EditorAction>
+        <EditorAction
           title="Delete note"
           onClick={handleDeleteNote}
           label="Delete note"
@@ -120,18 +149,42 @@ export const Editor = () => {
           <IconTrash />
         </EditorAction>
 
-        <div className="editor__actions-row">
+        <div className="width--full">
+          {saveToFilesystemOpen && (
+            <form
+              onSubmit={handleSaveToFilesystemSubmit}
+              className="border--top pad--h pad--v font-size--small flex"
+            >
+              <label className="width--half">
+                <span className="sr-only">Filename</span>
+                <input
+                  placeholder="Filename..."
+                  className="input"
+                  type="text"
+                  value={saveToFilesystemFilename}
+                  onChange={handleFilenameInputChange}
+                />
+              </label>
+
+              <button className="border--all button" type="submit">
+                Save
+              </button>
+            </form>
+          )}
+        </div>
+
+        <div className="width--full">
           {gistSyncOptionsOpen &&
             (octokit && gists.length && !error ? (
               <form
                 onSubmit={handleGistSyncSubmit}
-                className="gist-select__container"
+                className="font-size--small border--top pad--v flex"
               >
-                <label className="gist-select__input-wrapper">
-                  <span className="sr-only">Select a gist to view files</span>
+                <label className="width--half pad--h">
+                  <span className="sr-only">Select a gist</span>
 
                   <select
-                    className="gist-select__input"
+                    className="input"
                     value={
                       selectedGist
                         ? gists.findIndex(({id}) => id === selectedGist.id)
@@ -147,11 +200,11 @@ export const Editor = () => {
                   </select>
                 </label>
 
-                <label className="gist-select__input-wrapper">
-                  <span className="sr-only">Select a file to sync to</span>
+                <label className="width--half pad--h">
+                  <span className="sr-only">Select a file to save to</span>
 
                   <select
-                    className="gist-select__input"
+                    className="input"
                     value={
                       selectedFilename ||
                       Object.keys(selectedGist?.files || gists[0].files)[0]
@@ -169,7 +222,7 @@ export const Editor = () => {
                 </label>
 
                 <button
-                  className="gist-select__submit"
+                  className="border--all button"
                   type="submit"
                   disabled={gistSyncing}
                 >
@@ -178,24 +231,24 @@ export const Editor = () => {
               </form>
             ) : (
               <form
-                className="gist-select__container"
+                className="font-size--small border--top pad--v pad--h flex"
                 onSubmit={handleGistInitSubmit}
               >
-                <label className="gist-select__input-wrapper">
+                <label className="width--half">
                   {/* TODO: note gist priviledges */}
                   <span className="sr-only">Enter your GitHub secret</span>
                   <input
                     ref={gistInitRef}
                     type="text"
-                    className="gist-select__input"
-                    placeholder="Enter your GitHub secret..."
+                    className="input width--full"
+                    placeholder="GitHub secret..."
                     required
                   />
                 </label>
 
                 <button
                   type="submit"
-                  className="gist-select__submit"
+                  className="border--all button"
                   disabled={octokit && !gists.length && !error}
                 >
                   Save

@@ -33,6 +33,7 @@
     "draft-js": "^0.11.5",
     "draft-js-export-markdown": "^1.4.0",
     "electron-store": "^5.1.1",
+    "file-saver": "^2.0.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "shortid": "^2.2.15",

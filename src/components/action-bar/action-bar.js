@@ -89,7 +89,7 @@ export const ActionBar = () => {
       </label>
       <input
         placeholder="Search or create..."
-        className="action-bar__input"
+        className="input width--full z--max action-bar__input"
         type="text"
         {...getInputProps()}
       />
