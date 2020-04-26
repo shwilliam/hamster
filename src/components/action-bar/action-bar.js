@@ -76,7 +76,7 @@ export const ActionBar = () => {
   })
 
   return (
-    <div {...getComboboxProps()} className="action-bar">
+    <div {...getComboboxProps()} className="font-size--small action-bar">
       <label {...getLabelProps()}>
         <span className="action-bar__icon">
           {isOpen && highlightedIndex === inputItems.length - 1 ? (
@@ -90,14 +90,14 @@ export const ActionBar = () => {
       <input
         placeholder="Search or create..."
         className="input width--full z--max action-bar__input"
-        type="text"
+        type="search"
         {...getInputProps()}
       />
       {isOpen && (
-        <ul {...getMenuProps()} className="action-bar__results">
+        <ul {...getMenuProps()} className="z--max action-bar__results">
           {inputItems.map((item, index) => (
             <li
-              className="action-bar__result"
+              className="z--max action-bar__result"
               data-type={item.__placeholder__ ? 'CREATE' : 'SEARCH'}
               style={
                 highlightedIndex === index ? {backgroundColor: '#bde4ff'} : {}

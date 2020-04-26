@@ -80,7 +80,7 @@ export const Editor = () => {
 
   if (!activeNote)
     return (
-      <span className="hamster" role="img" aria-label="Hamster">
+      <span className="z--min hamster" role="img" aria-label="Hamster">
         🐹
       </span>
     )
