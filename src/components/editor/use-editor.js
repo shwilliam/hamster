@@ -1,8 +1,7 @@
 import {useRef, useContext, useState, useEffect} from 'react'
 import {EditorState, RichUtils, convertFromRaw, convertToRaw} from 'draft-js'
 import {stateToMarkdown} from 'draft-js-export-markdown'
-import {ActiveNoteContext, NotesContext, GistContext} from '../../context'
-import {useGistSelect} from './use-gist-select'
+import {ActiveNoteContext, NotesContext} from '../../context'
 
 const {clipboard} = window.require('electron')
 
@@ -11,16 +10,6 @@ export const useEditor = ref => {
 
   const {activeNote, clearActiveNote} = useContext(ActiveNoteContext)
   const {updateNote, deleteNote} = useContext(NotesContext)
-  const {gists, syncGist, onError} = useContext(GistContext)
-
-  const {
-    selectedGist,
-    selectedFilename,
-    onGistSelect,
-    onGistFileSelect,
-    onGistSyncStart,
-    onGistSyncEnd,
-  } = useGistSelect(gists)
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
 
@@ -85,32 +74,6 @@ export const useEditor = ref => {
     clearActiveNote()
   }
 
-  const [gistSyncOptionsOpen, setGistSyncOptionsOpen] = useState(false)
-  const toggleGistSyncOptions = () => setGistSyncOptionsOpen(s => !s)
-  const handleGistInputChange = e => onGistSelect(gists[e.target.value])
-  const handleGistFileInputChange = e => onGistFileSelect(e.target.value)
-  const handleGistSyncSubmit = e => {
-    e.preventDefault()
-
-    const gist = selectedGist ? selectedGist : gists[0]
-    const filename = selectedFilename || Object.keys(gist.files)[0]
-
-    onGistSyncStart()
-    syncGist({
-      gist_id: gist.id,
-      filename,
-      content: stateToMarkdown(editorState.getCurrentContent()),
-    })
-      .then(() => {
-        setGistSyncOptionsOpen(false)
-        new Notification('Saved to Gist!', {
-          body: `Markdown content from '${activeNote.title}' saved to '${filename}'.`,
-        })
-      })
-      .catch(() => onError())
-      .finally(() => onGistSyncEnd())
-  }
-
   return {
     editorState,
     setEditorState,
@@ -122,10 +85,5 @@ export const useEditor = ref => {
     toggleBlock,
     copyMdContent,
     handleDeleteNote,
-    gistSyncOptionsOpen,
-    toggleGistSyncOptions,
-    handleGistInputChange,
-    handleGistFileInputChange,
-    handleGistSyncSubmit,
   }
 }

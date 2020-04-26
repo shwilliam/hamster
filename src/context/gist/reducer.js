@@ -11,7 +11,6 @@ export const reducer = (stateAcc, {type, payload}) => {
         secret = payload.secret
 
         store.set('__hamster-gh-secret__', secret)
-        // TODO: allow changing secret
       }
 
       const octokit = new Octokit({auth: secret})

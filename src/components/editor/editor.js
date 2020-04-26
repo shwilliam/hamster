@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useContext, useState} from 'react'
+import React, {useRef, useEffect, useContext} from 'react'
 import {Editor as DraftEditor} from 'draft-js'
 import {stateToMarkdown} from 'draft-js-export-markdown'
 import {ActiveNoteContext, GistContext} from '../../context'
@@ -23,7 +23,16 @@ export const Editor = () => {
   const gistInitRef = useRef()
   const {activeNote} = useContext(ActiveNoteContext)
   const {init, octokit, gists, error} = useContext(GistContext)
-  const {selectedGist, selectedFilename, gistSyncing} = useGistSelect(gists)
+  const {
+    selectedGist,
+    selectedFilename,
+    gistSyncing,
+    handleGistInputChange,
+    handleGistFileInputChange,
+    handleGistSave,
+    gistSyncOptionsOpen,
+    toggleGistSyncOptions,
+  } = useGistSelect(gists)
   const {
     editorState,
     setEditorState,
@@ -35,12 +44,6 @@ export const Editor = () => {
     toggleBlock,
     copyMdContent,
     handleDeleteNote,
-
-    gistSyncOptionsOpen,
-    toggleGistSyncOptions,
-    handleGistInputChange,
-    handleGistFileInputChange,
-    handleGistSyncSubmit,
   } = useEditor(editorRef)
 
   const {
@@ -54,6 +57,11 @@ export const Editor = () => {
   const handleGistInitSubmit = e => {
     e.preventDefault()
     init(gistInitRef.current.value)
+  }
+
+  const handleGistSaveSubmit = e => {
+    e.preventDefault()
+    handleGistSave(editorState.getCurrentContent())
   }
 
   const handleFilenameInputChange = e => {
@@ -177,7 +185,7 @@ export const Editor = () => {
           {gistSyncOptionsOpen &&
             (octokit && gists.length && !error ? (
               <form
-                onSubmit={handleGistSyncSubmit}
+                onSubmit={handleGistSaveSubmit}
                 className="font-size--small border--top pad--v flex"
               >
                 <label className="width--half pad--h">
