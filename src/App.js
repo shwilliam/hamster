@@ -21,6 +21,12 @@ export const App = () => (
             <Editor />
           </main>
           <aside>
+            <h1 className="app__title">
+              <span className="sr-only">Hamster</span>
+              <span role="img" aria-label="Hamster emoji">
+                🐹
+              </span>
+            </h1>
             <InfoToggle />
           </aside>
         </div>

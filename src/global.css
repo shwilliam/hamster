@@ -93,6 +93,17 @@
   grid-template-rows: 55px 1fr;
 }
 
+.app__title {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.85rem;
+  padding: 3px 0;
+  pointer-events: none;
+}
+
 .app__header {
   -webkit-app-region: drag; /* enable window drag */
   resize: horizontal;
