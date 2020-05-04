@@ -4,7 +4,7 @@ import {NoteListItem} from './note-list-item'
 
 export const NoteList = () => {
   const noteListRef = useRef()
-  const {activeNote, updateActiveNote, isEditing} = useContext(
+  const {activeNote, updateActiveNote, isEditingTitle} = useContext(
     ActiveNoteContext,
   )
   const {notes} = useContext(NotesContext)
@@ -26,7 +26,7 @@ export const NoteList = () => {
           key={note.id}
           note={note}
           active={activeNote?.id === note.id}
-          editing={isEditing}
+          editing={isEditingTitle}
         />
       ))}
     </ul>

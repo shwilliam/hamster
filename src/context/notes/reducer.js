@@ -1,72 +1,75 @@
 import {ContentState, convertToRaw} from 'draft-js'
+import {
+  adjust,
+  compose,
+  findIndex,
+  insert,
+  mergeLeft,
+  mergeRight,
+  prop,
+  propEq,
+  remove,
+} from 'ramda'
 import shortid from 'shortid'
 import {store} from '../../store'
-import {sortByModified} from '../../utils'
+import {sortByModified, defaultToEmptyArray} from '../../utils'
+
+const makeNoteObj = title => ({
+  id: shortid.generate(),
+  title,
+  content: convertToRaw(ContentState.createFromText('')),
+  modified: new Date().toISOString(),
+})
 
 export const reducer = (stateAcc, {type, payload}) => {
-  const existingNotes = stateAcc.notes || []
-  let noteIdx
-  let updatedNotes
+  const mergeState = mergeRight(stateAcc)
+  const existingNotes = defaultToEmptyArray(stateAcc.notes)
 
   switch (type) {
     case 'GET_ALL_NOTES':
-      return {
-        ...stateAcc,
-        notes: store.get('__hamster-notes__')?.sort(sortByModified) || [],
-      }
+      return mergeState({
+        notes: compose(
+          sortByModified,
+          defaultToEmptyArray,
+        )(store.get('__hamster-notes__')),
+      })
 
     case 'CREATE_NOTE':
-      updatedNotes = [
-        {
-          id: shortid.generate(),
-          title: payload.title,
-          content: convertToRaw(ContentState.createFromText('')),
-          modified: new Date().toISOString(),
-        },
-        ...existingNotes,
-      ].sort(sortByModified)
-
-      store.set('__hamster-notes__', updatedNotes)
-
-      return {...stateAcc, notes: updatedNotes}
+      return mergeState({
+        notes: compose(
+          sortByModified,
+          insert(-1)(makeNoteObj(prop('title', payload))),
+        )(existingNotes),
+      })
 
     case 'UPDATE_NOTE':
-      noteIdx = existingNotes.findIndex(({id: noteId}) => noteId === payload.id)
-
-      existingNotes[noteIdx] = {
-        ...existingNotes[noteIdx],
-        content: payload.content,
-        modified: new Date().toISOString(),
-      }
-
-      updatedNotes = existingNotes.sort(sortByModified)
-
-      store.set('__hamster-notes__', updatedNotes)
-
-      return {...stateAcc, notes: updatedNotes}
+      return mergeState({
+        notes: compose(sortByModified, adjust)(
+          findIndex(propEq('id', prop('id', payload)))(existingNotes),
+          mergeLeft({
+            content: prop('content', payload),
+            modified: new Date().toISOString(),
+          }),
+          existingNotes,
+        ),
+      })
 
     case 'UPDATE_NOTE_TITLE':
-      noteIdx = existingNotes.findIndex(({id: noteId}) => noteId === payload.id)
-
-      existingNotes[noteIdx] = {
-        ...existingNotes[noteIdx],
-        title: payload.title,
-      }
-
-      updatedNotes = existingNotes.sort(sortByModified)
-
-      store.set('__hamster-notes__', updatedNotes)
-
-      return {...stateAcc, notes: updatedNotes}
+      return mergeState({
+        notes: compose(sortByModified, adjust)(
+          findIndex(propEq('id', prop('id', payload)))(existingNotes),
+          mergeLeft({title: prop('title', payload)}),
+          existingNotes,
+        ),
+      })
 
     case 'DELETE_NOTE':
-      noteIdx = existingNotes.findIndex(({id: noteId}) => noteId === payload.id)
-
-      existingNotes.splice(noteIdx, 1)
-
-      store.set('__hamster-notes__', existingNotes)
-
-      return {...stateAcc, notes: existingNotes}
+      return mergeState({
+        notes: remove(
+          findIndex(propEq('id', prop('id', payload)))(existingNotes),
+          1,
+        )(existingNotes),
+      })
 
     default:
       return stateAcc

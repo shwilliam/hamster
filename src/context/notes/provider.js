@@ -1,4 +1,5 @@
-import React, {useReducer, useEffect, useCallback} from 'react'
+import React, {useCallback, useEffect, useReducer} from 'react'
+import {store} from '../../store'
 import {NotesContext} from './context'
 import {reducer} from './reducer'
 
@@ -28,6 +29,10 @@ export const NotesContextProvider = ({children}) => {
   useEffect(() => {
     dispatch({type: 'GET_ALL_NOTES'})
   }, [])
+
+  useEffect(() => {
+    store.set('__hamster-notes__', state.notes)
+  }, [state.notes])
 
   return (
     <NotesContext.Provider

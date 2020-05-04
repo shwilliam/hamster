@@ -1,3 +1,4 @@
+import {mergeRight} from 'ramda'
 import React, {useReducer} from 'react'
 import {ActiveNoteContext} from './context'
 import {reducer} from './reducer'
@@ -5,7 +6,7 @@ import {reducer} from './reducer'
 export const ActiveNoteProvider = ({children}) => {
   const [state, dispatch] = useReducer(reducer, {
     activeNote: null,
-    isEditing: false,
+    isEditingTitle: false,
   })
 
   const updateActiveNote = note => {
@@ -17,24 +18,21 @@ export const ActiveNoteProvider = ({children}) => {
   }
 
   const setEditingTrue = () => {
-    dispatch({type: 'UPDATE_EDITING', payload: {isEditing: true}})
+    dispatch({type: 'UPDATE_EDITING', payload: {isEditingTitle: true}})
   }
 
   const setEditingFalse = () => {
-    dispatch({type: 'UPDATE_EDITING', payload: {isEditing: false}})
+    dispatch({type: 'UPDATE_EDITING', payload: {isEditingTitle: false}})
   }
 
-  const {activeNote, isEditing} = state
   return (
     <ActiveNoteContext.Provider
-      value={{
-        activeNote,
-        isEditing,
+      value={mergeRight(state)({
         updateActiveNote,
         clearActiveNote,
         setEditingTrue,
         setEditingFalse,
-      }}
+      })}
     >
       {children}
     </ActiveNoteContext.Provider>

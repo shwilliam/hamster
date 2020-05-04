@@ -4,11 +4,11 @@ export const reducer = (state, action) => {
       if (state?.activeNote?.id === action.payload.note?.id) {
         return state
       } else {
-        return {activeNote: action.payload.note, isEditing: false}
+        return {activeNote: action.payload.note, isEditingTitle: false}
       }
 
     case 'UPDATE_EDITING':
-      return {...state, isEditing: action.payload.isEditing}
+      return {...state, isEditingTitle: action.payload.isEditingTitle}
 
     default:
       return state

@@ -1,6 +1,6 @@
-import {useState, useEffect} from 'react'
+import {useEffect, useState} from 'react'
 import {saveAs} from 'file-saver'
-import {formatFilename} from '../../utils'
+import {compose, join, split, toLower} from 'ramda'
 
 export const useSaveToFilesystem = ({initialFilename}) => {
   const [open, setOpen] = useState(false)
@@ -13,7 +13,10 @@ export const useSaveToFilesystem = ({initialFilename}) => {
   }
 
   useEffect(() => {
-    if (initialFilename) setFilename(`${formatFilename(initialFilename)}.md`)
+    if (initialFilename)
+      setFilename(
+        `${compose(join('_'), split(/ /g), toLower)(initialFilename)}.md`,
+      )
   }, [initialFilename])
 
   return {

@@ -1,4 +1,3 @@
-export * from './formatFilename'
-export * from './formatReadableTimestamp'
+export * from './defaultToEmptyArray'
 export * from './sortByModified'
 export * from './stopEventPropagation'

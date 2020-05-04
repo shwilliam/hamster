@@ -1,6 +1,3 @@
-export const sortByModified = (a, b) => {
-  a = new Date(a.modified)
-  b = new Date(b.modified)
+import {sort, descend, prop} from 'ramda'
 
-  return a > b ? -1 : 1
-}
+export const sortByModified = sort(descend(prop('modified')))

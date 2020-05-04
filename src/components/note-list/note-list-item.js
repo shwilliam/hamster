@@ -1,6 +1,6 @@
 import React, {useContext, useMemo} from 'react'
-import {NotesContext, ActiveNoteContext} from '../../context'
-import {formatReadableTimestamp} from '../../utils'
+import {format as formatTimestamp} from 'timeago.js'
+import {ActiveNoteContext, NotesContext} from '../../context'
 import {ContentEditable, IconEdit} from '../index'
 
 export const NoteListItem = ({
@@ -22,7 +22,7 @@ export const NoteListItem = ({
 
   const handleNoteClick = () => updateActiveNote(note)
 
-  const timestamp = useMemo(() => formatReadableTimestamp(note.modified), [
+  const timestamp = useMemo(() => formatTimestamp(note.modified), [
     note.modified,
   ])
 

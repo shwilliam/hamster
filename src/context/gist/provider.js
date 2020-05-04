@@ -1,16 +1,8 @@
-import React, {useReducer, useEffect} from 'react'
+import {compose, cond, isNil, not, prop} from 'ramda'
+import React, {useEffect, useReducer} from 'react'
 import {store} from '../../store'
 import {GistContext} from './context'
 import {reducer} from './reducer'
-
-const fetchGists = octokit =>
-  octokit.gists
-    .list({
-      headers: {
-        'If-None-Match': '', // avoid cache
-      },
-    })
-    .then(({data}) => data)
 
 export const GistContextProvider = ({children}) => {
   const [state, dispatch] = useReducer(reducer, {
@@ -35,15 +27,17 @@ export const GistContextProvider = ({children}) => {
     })
 
   useEffect(() => {
-    const secret = store.get('__hamster-gh-secret__')
-    if (secret) init(secret)
+    cond([[compose(not, isNil), init]])(store.get('__hamster-gh-secret__'))
   }, [])
 
   useEffect(() => {
     if (state.octokit && !state.gists?.length) {
       ;(async () => {
         try {
-          const initialGists = await fetchGists(state.octokit)
+          const initialGists = await state.octokit.gists
+            .list({headers: {'If-None-Match': ''}}) // avoid cache
+            .then(prop('data'))
+
           dispatch({type: 'UPDATE_GISTS', payload: {gists: initialGists}})
         } catch (e) {
           store.delete('__hamster-gh-secret__')
