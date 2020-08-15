@@ -1,6 +1,6 @@
 # Hamster: Cross-platform note-taking app
 
-![](https://user-images.githubusercontent.com/38357771/80301078-c9c09480-8756-11ea-998a-cab7cada2cdd.png)
+![App screengrab](https://user-images.githubusercontent.com/38357771/90322710-4e087480-df0c-11ea-90d5-9173847fa67c.png)
 
 ## Development
 
