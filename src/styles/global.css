@@ -1,14 +1,47 @@
 :root {
+  --ui__bg: #fff;
   --ui__primary: #d9d7d9;
-
   --ui__secondary: #f5f5f5;
   --ui__secondary--active: #979797;
   --ui__secondary--hover: #c0c0c0;
-
   --ui__accent: #838384;
-
+  --ui__icon: #1e2428;
+  --input__bg: #fff;
+  --input__action: #bde4ff;
+  --input__placeholder: initial;
   --text__color: #5b5b5b;
-  --text__color--inverted: #ffffff;
+  --text__color--inverted: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ui__bg: #1d1d1c;
+    --ui__primary: #373736;
+    --ui__secondary: #292827;
+    --ui__secondary--active: #4f4f4d;
+    --ui__secondary--hover: #424241;
+    --ui__accent: #838384;
+    --ui__icon: #dedede;
+    --input__bg: #595958;
+    --input__action: #979797;
+    --input__placeholder: #979797;
+    --text__color: #fff;
+    --text__color--inverted: #fff;
+  }
+}
+
+/* globals */
+::placeholder {
+  color: var(--input__placeholder);
+}
+
+::-webkit-scrollbar {
+  background-color: var(--ui__secondary);
+}
+
+::-webkit-scrollbar-thumb:window-inactive,
+::-webkit-scrollbar-thumb {
+  background: var(--ui__primary);
 }
 
 /* utils */
@@ -64,6 +97,8 @@
   cursor: pointer;
   padding: 0.2rem 7px;
   margin: 0 7px;
+  background-color: var(--input__bg);
+  color: var(--text__color);
 }
 
 .input {
@@ -72,6 +107,8 @@
   height: 25px;
   border: 1px solid var(--ui__accent);
   border-radius: 5px;
+  background-color: var(--input__bg);
+  color: var(--text__color);
 }
 
 .info {
@@ -83,11 +120,12 @@
 
 .icon {
   width: 18px;
-  color: #1e2428;
+  color: var(--ui__icon);
 }
 
 /* app */
 .app {
+  background-color: var(--ui__bg);
   color: var(--text__color);
   display: grid;
   height: 100vh;
@@ -175,8 +213,12 @@
 .action-bar__result {
   padding: 0.25rem 0.5rem;
   border-top: 1px solid var(--ui__accent);
-  background-color: #fff;
+  background-color: var(--ui__bg);
   cursor: pointer;
+}
+
+.action-bar__result[data-highlight='true'] {
+  background-color: var(--ui__secondary--hover);
 }
 
 .action-bar__result[data-type='CREATE']::before {
@@ -257,7 +299,7 @@
 }
 
 .note-list__item-container[data-active='true'] {
-  background-color: var(--ui__secondary--active);
+  background-color: var(--ui__secondary--hover);
 }
 
 .note-list__item-container[data-active='true'] .note-list__label {
@@ -271,6 +313,7 @@
   border: none;
   text-align: left;
   cursor: pointer;
+  color: var(--text__color);
 }
 
 /* editor */
@@ -313,6 +356,7 @@
   cursor: pointer;
   text-align: center;
   white-space: nowrap;
+  color: var(--ui__icon);
 }
 
 .note-list__action:hover,

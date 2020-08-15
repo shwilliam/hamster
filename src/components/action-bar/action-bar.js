@@ -99,9 +99,7 @@ export const ActionBar = () => {
             <li
               className="z--max action-bar__result"
               data-type={item.__placeholder__ ? 'CREATE' : 'SEARCH'}
-              style={
-                highlightedIndex === index ? {backgroundColor: '#bde4ff'} : {}
-              }
+              data-highlight={highlightedIndex === index}
               key={item.id}
               {...getItemProps({item, index})}
             >
