@@ -197,13 +197,14 @@
 
 .action-bar__results {
   position: absolute;
-  top: 25px;
+  top: 27.5px;
   right: 0;
   left: 0;
   margin-top: -4px;
   width: 100%;
   background-color: #fff;
   border: 1px solid var(--ui__accent);
+  box-shadow: 0 0 3px var(--ui__accent);
   border-radius: 0 0 5px 5px;
   border-top: none;
   max-height: 197px;
